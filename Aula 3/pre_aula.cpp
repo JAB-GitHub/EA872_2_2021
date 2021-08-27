@@ -38,7 +38,7 @@ void Bloco:: set_x(float x_novo) {
 Bloco::Bloco(float v_novo, float x_novo) {
     v = v_novo;
     x = x_novo;
-    m = 1;
+    m = 10;
 }
 
 class Mola {
@@ -65,8 +65,8 @@ float Mola::get_t(){
 }
 
 Mola::Mola() {
-    k = 1;
-    b = 0;
+    k = 3;
+    b = 0.1;
     T = 0.1;
 }
 
@@ -94,15 +94,17 @@ class Sistema{
     private:
         Mola &mola;
         Bloco &bloco;
+        Imprimir &imprimir;
     public:
-        Sistema(Mola &mola, Bloco &bloco);
+        Sistema(Mola &mola, Bloco &bloco, Imprimir &imprimir);
         void posicao();
 
 };
 
-Sistema::Sistema(Mola &mola, Bloco &bloco):
+Sistema::Sistema(Mola &mola, Bloco &bloco, Imprimir &imprimir):
     mola(mola),
-    bloco(bloco)
+    bloco(bloco),
+    imprimir(imprimir)
 {
     std:: cout << "Está montado o Sistema!\n";
 }
@@ -110,32 +112,32 @@ Sistema::Sistema(Mola &mola, Bloco &bloco):
 void Sistema::posicao(){
     float x, f, a, v;
     v = bloco.get_v();
-    std:: cout << v << std::endl;
+    
     x = bloco.get_x();
-    std:: cout << x << std::endl;
+    
 
     f = -bloco.get_x()*mola.get_k() - bloco.get_v()*mola.get_b();
-    std:: cout << f << std::endl;
+    
     a = f/bloco.get_m();
-    std:: cout << a << std::endl;
+    
     v = v + a * mola.get_t();
-    std:: cout << v << std::endl;
+    
     x = x + v * mola.get_t();
-    std:: cout << x << std::endl;
-
+    
     bloco.set_v(v);
     bloco.set_x(x);
 }
 
-
+using namespace std;
 int main() {
-    Bloco bloco = Bloco(0, 1);
+    Bloco bloco = Bloco(10, 0);//Velocidade, posição
     Mola mola = Mola();
     Imprimir imprimir = Imprimir(bloco);
-    Sistema sistema = Sistema(mola, bloco);
+    Sistema sistema = Sistema(mola, bloco, imprimir);
 
     for (int n = 0; n<100; n++){
-        imprimir.imprimir();
+      sistema.posicao();
+      imprimir.imprimir();
     }
         
     return 0;
